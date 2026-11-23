@@ -1,0 +1,514 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sweet Bakery Shop</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #fff5f7;
+    color: #704454;
+}
+
+header {
+    background: #f5b6cb;
+    padding: 35px 15px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 32px;
+    margin: 5px;
+}
+
+header p {
+    margin: 8px;
+}
+
+nav {
+    background: white;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 8px #ead6de;
+    position: sticky;
+    top: 0;
+}
+
+button {
+    background: #df83a4;
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 5px;
+    font-size: 14px;
+}
+
+button:hover {
+    background: #c65e83;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
+
+.section {
+    background: white;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px #ead6de;
+}
+
+.hidden {
+    display: none;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.product {
+    background: #fff5f8;
+    padding: 18px;
+    text-align: center;
+    border-radius: 15px;
+}
+
+.product .emoji {
+    font-size: 45px;
+}
+
+.product h3 {
+    font-size: 17px;
+}
+
+.price {
+    color: #d65b87;
+    font-weight: bold;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #eee;
+    padding: 12px 0;
+}
+
+.cart-item button {
+    padding: 6px 10px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #e5c6d1;
+    border-radius: 8px;
+}
+
+.total {
+    font-size: 20px;
+    font-weight: bold;
+    color: #c65e83;
+}
+
+.receipt {
+    background: #fff5f8;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #b56c87;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🍰 Sweet Bakery Shop 🍓</h1>
+    <p>Welcome to our little bakery</p>
+    <p>ความสุขเล็ก ๆ ในทุกคำ ❤️</p>
+</header>
+
+<nav>
+    <button onclick="showHome()">🏠 หน้าแรก</button>
+    <button onclick="openMenu()">📖 หนังสือเมนู</button>
+    <button onclick="showCart()">🛒 ตะกร้า (<span id="cartCount">0</span>)</button>
+</nav>
+
+<div class="container">
+
+<!-- HOME -->
+<div id="home" class="section">
+    <h2>ยินดีต้อนรับสู่ Sweet Bakery Shop!</h2>
+    <p>ร้านเบเกอรี่ที่เต็มไปด้วยขนมแสนอร่อย</p>
+    <p>เลือกขนมที่คุณชอบได้จากหนังสือเมนูของเรา</p>
+    <button onclick="openMenu()">เปิดหนังสือเมนู 📖</button>
+</div>
+
+<!-- MENU -->
+<div id="menu" class="section hidden">
+
+    <h2>📖 BOOK MENU</h2>
+
+    <button onclick="showCategory('cake')">🍰 Cake & Dessert</button>
+    <button onclick="showCategory('bread')">🥐 Bakery</button>
+    <button onclick="showCategory('drink')">🧋 Drink</button>
+
+    <div id="menuProducts" class="menu-grid"></div>
+
+    <button onclick="showHome()">กลับหน้าแรก</button>
+
+</div>
+
+<!-- CART -->
+<div id="cart" class="section hidden">
+
+    <h2>🛒 Your Shopping Cart</h2>
+
+    <div id="cartItems">
+        ยังไม่มีสินค้าในตะกร้า
+    </div>
+
+    <hr>
+
+    <p>ยอดรวม: <span id="total">0</span> บาท</p>
+    <p>ส่วนลด: <span id="discount">0</span> บาท</p>
+
+    <p class="total">
+        ยอดสุทธิ: <span id="net">0</span> บาท
+    </p>
+
+    <button onclick="checkout()">ไปชำระเงิน</button>
+    <button onclick="clearCart()">ล้างตะกร้า</button>
+
+</div>
+
+<!-- PAYMENT -->
+<div id="payment" class="section hidden">
+
+    <h2>💳 Payment</h2>
+
+    <p>ยอดที่ต้องชำระ:
+        <b id="paymentTotal">0</b> บาท
+    </p>
+
+    <label>รับเงินจากลูกค้า</label>
+    <input type="number" id="money" placeholder="กรอกจำนวนเงิน">
+
+    <button onclick="pay()">ยืนยันการชำระเงิน</button>
+
+    <div id="receipt"></div>
+
+    <button onclick="showHome()">กลับหน้าแรก</button>
+
+</div>
+
+</div>
+
+<footer>
+    <p>🍓 Sweet Bakery Shop 🍓</p>
+    <p>Thank you for visiting us!</p>
+</footer>
+
+<script>
+
+// PRODUCTS
+const products = [
+    {id:1,name:"Cheesecake",price:55,category:"cake",emoji:"🍰"},
+    {id:2,name:"Strawberry Cheesecake",price:65,category:"cake",emoji:"🍓"},
+    {id:3,name:"Chocolate Cake",price:55,category:"cake",emoji:"🍫"},
+    {id:4,name:"Tiramisu",price:80,category:"cake",emoji:"🍮"},
+    {id:5,name:"Blueberry Cheesecake",price:70,category:"cake",emoji:"🫐"},
+    {id:6,name:"Matcha Roll Cake",price:65,category:"cake",emoji:"🍵"},
+
+    {id:7,name:"Croissant",price:45,category:"bread",emoji:"🥐"},
+    {id:8,name:"Chocolate Croissant",price:55,category:"bread",emoji:"🍫"},
+    {id:9,name:"Cinnamon Roll",price:50,category:"bread",emoji:"🥯"},
+    {id:10,name:"Strawberry Donut",price:35,category:"bread",emoji:"🍩"},
+
+    {id:11,name:"Matcha Latte",price:70,category:"drink",emoji:"🍵"},
+    {id:12,name:"Cocoa",price:50,category:"drink",emoji:"🥤"}
+];
+
+// CART
+let cart = [];
+
+function hideAll() {
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("menu").classList.add("hidden");
+    document.getElementById("cart").classList.add("hidden");
+    document.getElementById("payment").classList.add("hidden");
+}
+
+function showHome() {
+    hideAll();
+    document.getElementById("home").classList.remove("hidden");
+}
+
+function openMenu() {
+    hideAll();
+    document.getElementById("menu").classList.remove("hidden");
+    showCategory("cake");
+}
+
+// SHOW CATEGORY
+function showCategory(category) {
+
+    const menu = document.getElementById("menuProducts");
+
+    const filtered = products.filter(
+        p => p.category === category
+    );
+
+    menu.innerHTML = "";
+
+    filtered.forEach(p => {
+
+        menu.innerHTML += `
+            <div class="product">
+                <div class="emoji">${p.emoji}</div>
+                <h3>${p.name}</h3>
+                <p class="price">${p.price} บาท</p>
+                <button onclick="addCart(${p.id})">
+                    + เพิ่มลงตะกร้า
+                </button>
+            </div>
+        `;
+    });
+}
+
+// ADD PRODUCT
+function addCart(id) {
+
+    let product = products.find(p => p.id === id);
+
+    let found = cart.find(p => p.id === id);
+
+    if (found) {
+        found.quantity++;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: 1
+        });
+    }
+
+    updateCount();
+
+    alert("เพิ่ม " + product.name + " ลงตะกร้าแล้ว!");
+}
+
+// UPDATE CART COUNT
+function updateCount() {
+
+    let count = cart.reduce(
+        (sum, item) => sum + item.quantity, 0
+    );
+
+    document.getElementById("cartCount").innerText = count;
+}
+
+// CALCULATE
+function calculate() {
+
+    let total = cart.reduce(
+        (sum, item) => sum + item.price * item.quantity, 0
+    );
+
+    let discount = total >= 100 ? total * 0.05 : 0;
+
+    return {
+        total: total,
+        discount: discount,
+        net: total - discount
+    };
+}
+
+// SHOW CART
+function showCart() {
+
+    hideAll();
+
+    document.getElementById("cart").classList.remove("hidden");
+
+    let area = document.getElementById("cartItems");
+
+    if (cart.length === 0) {
+        area.innerHTML = "ยังไม่มีสินค้าในตะกร้า";
+    } else {
+
+        area.innerHTML = "";
+
+        cart.forEach(item => {
+
+            area.innerHTML += `
+                <div class="cart-item">
+                    <div>
+                        <b>${item.name}</b><br>
+                        ${item.price} x ${item.quantity}
+                        = ${item.price * item.quantity} บาท
+                    </div>
+
+                    <div>
+                        <button onclick="changeQty(${item.id},-1)">-</button>
+                        ${item.quantity}
+                        <button onclick="changeQty(${item.id},1)">+</button>
+                        <button onclick="removeItem(${item.id})">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    let result = calculate();
+
+    document.getElementById("total").innerText =
+        result.total.toFixed(2);
+
+    document.getElementById("discount").innerText =
+        result.discount.toFixed(2);
+
+    document.getElementById("net").innerText =
+        result.net.toFixed(2);
+}
+
+// CHANGE QUANTITY
+function changeQty(id, amount) {
+
+    let item = cart.find(p => p.id === id);
+
+    item.quantity += amount;
+
+    if (item.quantity <= 0) {
+        removeItem(id);
+    } else {
+        updateCount();
+        showCart();
+    }
+}
+
+// REMOVE
+function removeItem(id) {
+
+    cart = cart.filter(p => p.id !== id);
+
+    updateCount();
+    showCart();
+}
+
+// CLEAR
+function clearCart() {
+
+    if (confirm("ต้องการล้างตะกร้าสินค้าหรือไม่?")) {
+        cart = [];
+        updateCount();
+        showCart();
+    }
+}
+
+// CHECKOUT
+function checkout() {
+
+    if (cart.length === 0) {
+        alert("กรุณาเลือกสินค้าก่อน");
+        return;
+    }
+
+    hideAll();
+
+    document.getElementById("payment").classList.remove("hidden");
+
+    let result = calculate();
+
+    document.getElementById("paymentTotal").innerText =
+        result.net.toFixed(2);
+
+    document.getElementById("receipt").innerHTML = "";
+}
+
+// PAYMENT
+function pay() {
+
+    let moneyInput = document.getElementById("money").value;
+
+    if (moneyInput === "" || Number(moneyInput) < 0) {
+        alert("กรุณากรอกจำนวนเงินให้ถูกต้อง");
+        return;
+    }
+
+    let money = Number(moneyInput);
+
+    let result = calculate();
+
+    if (money < result.net) {
+        alert("เงินไม่พอ ขาดอีก " +
+            (result.net - money).toFixed(2) + " บาท");
+        return;
+    }
+
+    let change = money - result.net;
+
+    let receipt = `
+        <div class="receipt">
+            <h2>🧾 RECEIPT</h2>
+            <h3>Sweet Bakery Shop</h3>
+            <hr>
+    `;
+
+    cart.forEach(item => {
+        receipt += `
+            <p>${item.name} x ${item.quantity}
+            = ${item.price * item.quantity} บาท</p>
+        `;
+    });
+
+    receipt += `
+        <hr>
+        ยอดรวม: ${result.total.toFixed(2)} บาท<br>
+        ส่วนลด: ${result.discount.toFixed(2)} บาท<br>
+        ยอดสุทธิ: ${result.net.toFixed(2)} บาท<br>
+        รับเงิน: ${money.toFixed(2)} บาท<br>
+        เงินทอน: ${change.toFixed(2)} บาท<br>
+        <h3>ขอบคุณที่ใช้บริการ ❤️</h3>
+        <button onclick="window.print()">พิมพ์ใบเสร็จ</button>
+        </div>
+    `;
+
+    document.getElementById("receipt").innerHTML = receipt;
+
+    cart = [];
+    updateCount();
+    document.getElementById("money").value = "";
+}
+
+showHome();
+
+</script>
+
+</body>
+</html>
